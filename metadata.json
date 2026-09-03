@@ -1,0 +1,6 @@
+{
+  "name": "BurnCloud AIGC",
+  "description": "Generate AI content with built-in AIGC labeling.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
