@@ -1,0 +1,23 @@
+# ==========================================
+# BurnCloud AIGC Docker Compose 部署配置
+# ==========================================
+version: '3.8'
+
+services:
+  burncloud-aigc:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: burncloud-aigc
+    restart: unless-stopped
+    ports:
+      # 默认映射主机 3000 端口，可按需修改，例如 8080:80 或 80:80
+      - "${PORT:-3000}:80"
+    environment:
+      - NODE_ENV=production
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q --spider http://localhost/ || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
