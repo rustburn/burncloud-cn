@@ -1,5 +1,6 @@
 import { AigcProvider, ModelInfo } from './types';
 import { synthesizeVoiceWav } from './localWebAudio';
+import { generateStableVideo, getStableVideoModels } from './videoEngine';
 
 export class ZhipuProvider implements AigcProvider {
   id = 'zhipu' as const;
@@ -52,6 +53,7 @@ export class ZhipuProvider implements AigcProvider {
         providerId: 'zhipu',
         badgeColor: 'green',
       },
+      ...getStableVideoModels('zhipu'),
     ];
   }
 
@@ -187,15 +189,9 @@ export class ZhipuProvider implements AigcProvider {
 
   async generateVideo(
     prompt: string,
-    model = 'happyhorse-1.1'
+    model = 'wan-free'
   ): Promise<{ blob: Blob; model: string; providerName: string }> {
-    const encodedPrompt = encodeURIComponent(prompt.trim());
-    const res = await fetch(`https://gen.pollinations.ai/video/${encodedPrompt}?model=${encodeURIComponent(model)}`);
-    if (!res.ok) {
-      throw new Error(`视频网关响应异常 (${res.status})。`);
-    }
-    const blob = await res.blob();
-    return { blob, model, providerName: '智谱 AI/视频网关' };
+    return await generateStableVideo(prompt, model, undefined, '智谱 AI/高精视频引擎');
   }
 
   async generateAudio(

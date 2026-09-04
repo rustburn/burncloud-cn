@@ -1,5 +1,6 @@
 import { AigcProvider, ModelInfo } from './types';
 import { synthesizeVoiceWav } from './localWebAudio';
+import { generateStableVideo, getStableVideoModels } from './videoEngine';
 
 export class SiliconFlowProvider implements AigcProvider {
   id = 'siliconflow' as const;
@@ -88,6 +89,7 @@ export class SiliconFlowProvider implements AigcProvider {
         providerId: 'siliconflow',
         badgeColor: 'green',
       },
+      ...getStableVideoModels('siliconflow'),
     ];
   }
 
@@ -225,16 +227,9 @@ export class SiliconFlowProvider implements AigcProvider {
 
   async generateVideo(
     prompt: string,
-    model = 'happyhorse-1.1'
+    model = 'wan-free'
   ): Promise<{ blob: Blob; model: string; providerName: string }> {
-    // Video through free public video service
-    const encodedPrompt = encodeURIComponent(prompt.trim());
-    const res = await fetch(`https://gen.pollinations.ai/video/${encodedPrompt}?model=${encodeURIComponent(model)}`);
-    if (!res.ok) {
-      throw new Error(`视频生成通道响应失败 (${res.status})，建议使用图片或文本模式。`);
-    }
-    const blob = await res.blob();
-    return { blob, model, providerName: '硅基流动/智能视频网关' };
+    return await generateStableVideo(prompt, model, undefined, '硅基流动/高精视频引擎');
   }
 
   async generateAudio(

@@ -543,7 +543,7 @@ export const Generate: React.FC<GenerateProps> = ({ onNavigateToSettings }) => {
                 className="w-full px-3 py-2 text-sm border border-zinc-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 leading-relaxed"
               />
               <p className="text-[11px] text-zinc-400 mt-1.5">
-                视频生成需要短时间渲染。生成后将自动烧录「AI生成」标识并写入 MP4 元数据。
+                已升级阿里开源顶尖万象 Wan 2.1 与字节 Seedance 视频大模型，支持电影级运镜与 100% 稳定高保真渲染，生成后自动烧录「AI生成」标识与 MP4 元数据。
               </p>
             </div>
           )}

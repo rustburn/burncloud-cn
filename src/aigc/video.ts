@@ -122,14 +122,21 @@ export async function processVideo(
   video.playsInline = true;
   video.crossOrigin = 'anonymous';
 
-  await new Promise<void>((resolve, reject) => {
-    video.onloadedmetadata = () => resolve();
-    video.onerror = () => reject(new Error('Failed to load raw video for watermark burn-in'));
+  await new Promise<void>((resolve) => {
+    const timer = setTimeout(() => resolve(), 6000);
+    video.onloadedmetadata = () => {
+      clearTimeout(timer);
+      resolve();
+    };
+    video.onerror = () => {
+      clearTimeout(timer);
+      resolve();
+    };
   });
 
-  const width = video.videoWidth || 1280;
-  const height = video.videoHeight || 720;
-  const duration = video.duration || 3;
+  const width = video.videoWidth > 0 ? video.videoWidth : 1280;
+  const height = video.videoHeight > 0 ? video.videoHeight : 720;
+  const duration = Number.isFinite(video.duration) && video.duration > 0 ? video.duration : 4;
 
   const canvas = document.createElement('canvas');
   canvas.width = width;

@@ -1,5 +1,6 @@
 import { AigcProvider, ModelInfo } from './types';
 import { synthesizeVoiceWav } from './localWebAudio';
+import { generateStableVideo, getStableVideoModels } from './videoEngine';
 
 export class FreePublicProvider implements AigcProvider {
   id = 'free_public' as const;
@@ -42,15 +43,7 @@ export class FreePublicProvider implements AigcProvider {
         providerId: 'free_public',
         badgeColor: 'green',
       },
-      {
-        id: 'happyhorse-free',
-        name: 'HappyHorse 公共视频通道',
-        description: '基于短视频生成模型的公共演示通道。',
-        output_modalities: ['video'],
-        priceTag: '免Key直连',
-        providerId: 'free_public',
-        badgeColor: 'amber',
-      },
+      ...getStableVideoModels('free_public'),
     ];
   }
 
@@ -196,15 +189,9 @@ export class FreePublicProvider implements AigcProvider {
 
   async generateVideo(
     prompt: string,
-    model = 'happyhorse-free'
+    model = 'wan-free'
   ): Promise<{ blob: Blob; model: string; providerName: string }> {
-    const encoded = encodeURIComponent(prompt.trim());
-    const res = await fetch(`https://gen.pollinations.ai/video/${encoded}?model=happyhorse-1.1`);
-    if (!res.ok) {
-      throw new Error('公共视频服务正忙，建议使用免密图片或文本生成。');
-    }
-    const blob = await res.blob();
-    return { blob, model, providerName: '免密公共视频网关' };
+    return await generateStableVideo(prompt, model, undefined, '免密公共/高精视频引擎');
   }
 
   async generateAudio(

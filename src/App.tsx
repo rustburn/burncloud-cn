@@ -2,6 +2,7 @@ import { useState } from 'react';
 import {
   Sparkles,
   FileCheck,
+  GitFork,
   Settings as SettingsIcon,
   Shield,
   Menu,
@@ -14,9 +15,10 @@ import {
 } from 'lucide-react';
 import { Generate } from './pages/Generate';
 import { Verify } from './pages/Verify';
+import { Flow } from './pages/Flow';
 import { Settings } from './pages/Settings';
 
-export type ActivePage = 'generate' | 'verify' | 'settings';
+export type ActivePage = 'generate' | 'verify' | 'flow' | 'settings';
 
 interface PublicPlatformLink {
   title: string;
@@ -33,6 +35,7 @@ export default function App() {
   const navItems = [
     { id: 'generate' as const, label: '生成', icon: Sparkles },
     { id: 'verify' as const, label: '文件验证', icon: FileCheck },
+    { id: 'flow' as const, label: '算法流程', icon: GitFork },
     { id: 'settings' as const, label: '设置', icon: SettingsIcon },
   ];
 
@@ -284,6 +287,7 @@ export default function App() {
           <Generate onNavigateToSettings={() => setActivePage('settings')} />
         )}
         {activePage === 'verify' && <Verify />}
+        {activePage === 'flow' && <Flow />}
         {activePage === 'settings' && <Settings />}
       </main>
     </div>

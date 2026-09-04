@@ -1,5 +1,6 @@
 import { AigcProvider, ModelInfo } from './types';
 import { synthesizeVoiceWav } from './localWebAudio';
+import { generateStableVideo } from './videoEngine';
 
 export class PollinationsProvider implements AigcProvider {
   id = 'pollinations' as const;
@@ -132,7 +133,7 @@ export class PollinationsProvider implements AigcProvider {
     if (filtered.length === 0) {
       if (modality === 'text') return 'openai';
       if (modality === 'image') return 'flux';
-      if (modality === 'video') return 'happyhorse-1.1';
+      if (modality === 'video') return 'wan-3.0';
       if (modality === 'audio') return 'kokoro';
       return '';
     }
@@ -145,7 +146,7 @@ export class PollinationsProvider implements AigcProvider {
     const preferred: Record<string, string[]> = {
       text: ['openai', 'openai-fast', 'google/gemini-2.5-flash-lite'],
       image: ['flux', 'turbo', 'zimage'],
-      video: ['happyhorse-1.1', 'seedance-2.0-fast', 'wan-3.0'],
+      video: ['wan-3.0', 'wan', 'seedance-2.0-fast', 'minimax-h3', 'wan-fast'],
       audio: ['kokoro', 'grok-tts', 'elevenlabs'],
     };
 
@@ -227,30 +228,10 @@ export class PollinationsProvider implements AigcProvider {
 
   async generateVideo(
     prompt: string,
-    model = 'happyhorse-1.1',
+    model = 'wan-3.0',
     apiKey?: string
   ): Promise<{ blob: Blob; model: string; providerName: string }> {
-    const key = apiKey || localStorage.getItem('bc_pollinations_api_key') || '';
-    const encodedPrompt = encodeURIComponent(prompt.trim());
-    let url = `${this.baseUrl}/video/${encodedPrompt}?model=${encodeURIComponent(model)}`;
-
-    if (key.trim()) {
-      url += `&key=${encodeURIComponent(key.trim())}`;
-    }
-
-    const res = await fetch(url);
-    if (!res.ok) {
-      const errBody = await res.text();
-      let msg = `Video generation failed (HTTP ${res.status})`;
-      try {
-        const parsed = JSON.parse(errBody);
-        if (parsed.error?.message) msg = parsed.error.message;
-      } catch {}
-      throw new Error(msg);
-    }
-
-    const blob = await res.blob();
-    return { blob, model, providerName: 'Pollinations AI' };
+    return await generateStableVideo(prompt, model, apiKey, 'Pollinations AI/视频网关');
   }
 
   async generateAudio(
